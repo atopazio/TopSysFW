@@ -1241,8 +1241,9 @@ public final class TSUtil {
 			return true;
 		} else if (value instanceof Collection) {
 			return ((Collection) value).isEmpty();
+		} else if (value instanceof String) {
+			return isEmpty((String) value);
 		}
-
 		return false;
 	}
 
