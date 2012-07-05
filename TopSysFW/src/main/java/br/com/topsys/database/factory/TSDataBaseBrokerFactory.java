@@ -28,4 +28,9 @@ public final class TSDataBaseBrokerFactory {
 		
 	}
 	
+	public static TSDataBaseBrokerIf getDataBaseBrokerIf(String classNameDB,String url, String user, String password){
+		return (TSDataBaseBrokerIf)TSInstanceUtil.getInstance(nameClass,classNameDB,url,user,password);
+		
+	}
+	
 }

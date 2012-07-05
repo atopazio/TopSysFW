@@ -23,6 +23,10 @@ public abstract class TSDataBaseBrokerPFAb extends TSDataBaseBrokerAb {
 	public TSDataBaseBrokerPFAb(String jndi) {
 		super(jndi);
 	}
+	
+	public TSDataBaseBrokerPFAb(String className,String url, String user, String password){
+		super(className,url,user,password);
+	}
 
 
 	public void prepareProcedure(String nomeProcedure, int parametros) {

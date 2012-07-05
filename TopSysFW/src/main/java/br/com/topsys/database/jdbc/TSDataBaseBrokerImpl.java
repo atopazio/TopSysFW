@@ -18,6 +18,10 @@ public class TSDataBaseBrokerImpl extends TSDataBaseBrokerPFAb {
 		super(jndi);
 	}
 	
+	public TSDataBaseBrokerImpl(String className,String url, String user, String password){
+		super(className,url,user,password);
+	}
+	
 
 	private int transaction = 0;
 	

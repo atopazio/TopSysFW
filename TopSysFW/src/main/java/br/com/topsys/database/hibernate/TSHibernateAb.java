@@ -28,7 +28,7 @@ public abstract class TSHibernateAb<T extends Serializable> {
 
 	private Session getSession() {
 
-		return TSHibernateUtil.getCurrentSession();
+		return TSHibernateUtil.getSession();
 	}
 
 	protected abstract Class<T> getPersistentClass();
@@ -43,8 +43,6 @@ public abstract class TSHibernateAb<T extends Serializable> {
 		Session session = null;
 		try {
 			session = getSession();
-
-			session.setFlushMode(FlushMode.NEVER);
 
 			if (lock) {
 				objeto = (T) session.get(this.getPersistentClass(), id,

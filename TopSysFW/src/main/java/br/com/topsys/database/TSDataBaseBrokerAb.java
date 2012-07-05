@@ -3,6 +3,7 @@ package br.com.topsys.database;
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,6 +59,19 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 		this.jndi = jndi;
 		this.connection = this.getConnection(jndi);
 	}
+	
+	public TSDataBaseBrokerAb(String className, String url, String user, String password) {
+		try {
+			Class.forName(className);
+			this.connection = this.getConnection(url, user, password);
+			
+		} catch (ClassNotFoundException e) {
+			 throw new TSSystemException(e); 		
+	    }
+		
+		
+	}
+	
 
 	public Long getSequenceNextValue(String nome) {
 		return TSSequenceFactory.getSequenceIf(this.jndi).getNextValue(nome);
@@ -90,6 +104,24 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 					.getDataSource(jndi);
 
 			connection = dataSource.getConnection();
+
+		} catch (Exception e) {
+			throw new TSSystemException(e);
+		}
+
+		return connection;
+	}
+	
+	private Connection getConnection(String url, String user, String password) {
+		Connection connection = null;
+		
+
+		try {
+
+			connection = DriverManager.getConnection(
+			        url,
+			        user,
+			        password);
 
 		} catch (Exception e) {
 			throw new TSSystemException(e);

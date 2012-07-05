@@ -19,6 +19,10 @@ public final class TSDataBaseBrokerCMTImpl extends TSDataBaseBrokerPFAb {
 	public TSDataBaseBrokerCMTImpl(String jndi) {
 		super(jndi);
 	}
+	
+	public TSDataBaseBrokerCMTImpl(String className,String url, String user, String password){
+		super(className,url,user,password);
+	}
 
 	public boolean executeProcedureOrFunction() throws TSApplicationException {
 		boolean retorno = false;

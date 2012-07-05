@@ -42,4 +42,23 @@ public final class TSInstanceUtil {
 		}
 		return obj;
 	}
+	
+	
+	public static Object getInstance(String nameClass,String nameClassDB, String url, String user, String password){
+		Object obj=null;
+		
+		try {
+		    
+			Class classe=Class.forName(nameClass);
+			
+		    Constructor construtor = classe.getConstructor(String.class,String.class,String.class,String.class);
+		    
+		    obj = construtor.newInstance(nameClassDB,url,user,password);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TSSystemException(e);
+		}
+		return obj;
+	}
 }

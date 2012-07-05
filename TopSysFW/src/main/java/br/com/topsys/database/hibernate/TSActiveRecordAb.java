@@ -1,5 +1,6 @@
 package br.com.topsys.database.hibernate;
 
+
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -7,9 +8,12 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Example;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.topsys.constant.TSConstant;
@@ -17,12 +21,16 @@ import br.com.topsys.exception.TSApplicationException;
 import br.com.topsys.exception.TSSystemException;
 import br.com.topsys.util.TSHibernateUtil;
 
-public abstract class TSHibernateBrokerAb<T extends Serializable> extends TSHibernateAb<T>
-//implements TSPersistenceBrokerIf<T, ID> 
-{
 
+
+
+
+public abstract class TSActiveRecordAb<T> implements Serializable {
+
+	protected Class<T> persistentClass;
 	
-	public TSHibernateBrokerAb() {
+	@SuppressWarnings("unchecked")
+	public TSActiveRecordAb() {
 		this.persistentClass = (Class<T>) ((ParameterizedType) getClass()
 				.getGenericSuperclass()).getActualTypeArguments()[0];
 		
@@ -33,11 +41,294 @@ public abstract class TSHibernateBrokerAb<T extends Serializable> extends TSHibe
 		return TSHibernateUtil.getSession();
 	}
 	
-	@Override
+	
 	protected Class<T> getPersistentClass() {
-		// TODO Auto-generated method stub
+	
 		return this.persistentClass;
 	}
+
+	
+
+
+	@SuppressWarnings("unchecked")
+	public T findById(Long id) {
+		
+		this.openTransaction();
+		
+		T objeto = null;
+
+		Session session = null;
+		try {
+			session = getSession();
+
+
+		objeto = (T) session.get(this.getPersistentClass(), id);
+
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+
+		return objeto;
+
+	}
+
+	protected void openTransaction() {
+		
+		if(!this.getSession().getTransaction().isActive()){
+			this.getSession().beginTransaction();
+		}
+		
+	}
+
+
+
+	public List<T> findAll(String... fieldsOrderBy) {
+		this.openTransaction();
+		
+		List<T> coll = null;
+		Session session = getSession();
+		Query queryObject = null;
+		try {
+
+			StringBuilder sql=new StringBuilder("select o from ");
+			sql.append(this.getPersistentClass().getName());
+			sql.append(" o ");
+			if(fieldsOrderBy!=null && fieldsOrderBy.length > 0){
+				sql.append(" order by ");
+			}
+			for(String propertyName : fieldsOrderBy){
+				sql.append("o.");
+				sql.append(propertyName);
+				sql.append(",");
+			}
+			
+			String sqlFinal=sql.substring(0, sql.length()-1);
+			
+			queryObject = session.createQuery(sqlFinal);
+			
+			coll = queryObject.list();
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+
+		return coll;
+
+		
+	}
+	
+	public T getByModel(String... fieldsOrderBy) {
+		
+		this.openTransaction();
+		
+		Criteria crit = null;
+		Session session = null;
+		
+		Criterion criterion=Example.create(this).ignoreCase().excludeZeroes();
+
+		try {
+			session = getSession();
+
+			
+
+			crit = session.createCriteria(getPersistentClass());
+			
+			for(String propertyName : fieldsOrderBy){
+				
+				crit.addOrder(Order.asc(propertyName));
+				
+			}
+			
+			crit.add(criterion);
+			
+		
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+
+		return (T) crit.uniqueResult();
+		
+	
+	}
+	
+	public T getByModel(String[] excludeProperty,String... fieldsOrderBy ) {
+		
+		this.openTransaction();
+		
+		Criteria crit = null;
+		Session session = getSession();
+		try {
+			crit = session.createCriteria(getPersistentClass());
+		
+			Example example = Example.create(this);
+			example.ignoreCase();
+			
+			
+			example.excludeZeroes();
+
+			for (String exclude : excludeProperty) {
+				example.excludeProperty(exclude);
+			}
+			
+			for(String propertyName : fieldsOrderBy){
+				crit.addOrder(Order.asc(propertyName));
+			}
+			
+			crit.add(example);
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+		return (T) crit.uniqueResult();
+	}
+
+	public List<T> findByModel(String... fieldsOrderBy) {
+		
+		this.openTransaction();
+		
+		Criteria crit = null;
+		Session session = null;
+		
+		Criterion criterion=Example.create(this).enableLike(
+				MatchMode.ANYWHERE).ignoreCase().excludeZeroes();
+
+		try {
+			session = getSession();
+
+			
+
+			crit = session.createCriteria(getPersistentClass());
+			
+			for(String propertyName : fieldsOrderBy){
+				
+				crit.addOrder(Order.asc(propertyName));
+				
+			}
+			
+			crit.add(criterion);
+			
+		
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+
+		return crit.list();
+		
+	
+	}
+	
+	
+
+
+	public List<T> findByModel(String[] excludeProperty,String... fieldsOrderBy ) {
+		
+		this.openTransaction();
+		
+		Criteria crit = null;
+		Session session = getSession();
+		try {
+			crit = session.createCriteria(getPersistentClass());
+		
+			Example example = Example.create(this);
+			example.ignoreCase();
+			example.enableLike(MatchMode.ANYWHERE);
+			
+			example.excludeZeroes();
+
+			for (String exclude : excludeProperty) {
+				example.excludeProperty(exclude);
+			}
+			
+			for(String propertyName : fieldsOrderBy){
+				crit.addOrder(Order.asc(propertyName));
+			}
+			
+			crit.add(example);
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+		return crit.list();
+	}
+
+	public T update() throws TSApplicationException {
+		Session session = getSession();
+		T entityRetorno=null;
+		try {
+
+			entityRetorno = (T)session.merge(this);
+	
+		} catch (ConstraintViolationException e) {
+		
+			session.getTransaction().rollback();
+
+			throw new TSApplicationException(TSConstant.MENSAGEM_UNIQUE,e);
+
+		} catch (Exception e) {
+		
+			session.getTransaction().rollback();
+
+			throw new TSSystemException(e);
+		}
+		return entityRetorno;
+	}
+
+	public void save() throws TSApplicationException {
+		Session session = getSession();
+
+		try {
+
+			session.persist(this);
+			
+			
+		} catch (ConstraintViolationException e) {
+		
+			session.getTransaction().rollback();
+
+			throw new TSApplicationException(TSConstant.MENSAGEM_UNIQUE,e);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			session.getTransaction().rollback();
+
+			throw new TSSystemException(e);
+		}
+
+	}
+
+	public void remove() throws TSApplicationException {
+		Session session = getSession();
+
+		try {
+
+			session.delete(this);
+			
+		} catch (ConstraintViolationException e) {
+		
+			session.getTransaction().rollback();
+
+			throw new TSApplicationException(TSConstant.MENSAGEM_FOREIGNKEY,e);
+
+		} catch (Exception e) {
+			
+			session.getTransaction().rollback();
+
+			throw new TSSystemException(e);
+		}
+
+	}
+
+	
 
 	
 	@SuppressWarnings("unchecked")
@@ -201,7 +492,7 @@ public abstract class TSHibernateBrokerAb<T extends Serializable> extends TSHibe
 		Object objeto = null;
 		Session session = getSession();
 		try {
-			session.setFlushMode(FlushMode.NEVER);
+			
 			query = session.createQuery(ejbql);
 
 			if (objects != null) {
@@ -406,7 +697,7 @@ public abstract class TSHibernateBrokerAb<T extends Serializable> extends TSHibe
 	
 
 		} catch (ConstraintViolationException e) {
-			/* For�a o rollback da aplica��o */
+		
 			session.getTransaction().rollback();
 
 			throw new TSApplicationException(TSConstant.MENSAGEM_FOREIGNKEY);
