@@ -51,7 +51,7 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 
 
 	@SuppressWarnings("unchecked")
-	public T findById(Long id) {
+	public T getById(Long id) {
 		
 		this.openTransaction();
 		
@@ -306,7 +306,7 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 
 	}
 
-	public void remove() throws TSApplicationException {
+	public void delete() throws TSApplicationException {
 		Session session = getSession();
 
 		try {
