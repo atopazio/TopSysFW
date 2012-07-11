@@ -133,7 +133,6 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 			session = getSession();
 
 			
-
 			crit = session.createCriteria(getPersistentClass());
 			
 			for(String propertyName : fieldsOrderBy){
@@ -266,6 +265,8 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 		try {
 
 			entityRetorno = (T)session.merge(this);
+			
+			session.flush();
 	
 		} catch (ConstraintViolationException e) {
 		
@@ -288,6 +289,8 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 		try {
 
 			session.persist(this);
+			
+			session.flush();
 			
 			
 		} catch (ConstraintViolationException e) {
@@ -312,6 +315,8 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 		try {
 
 			session.delete(this);
+			
+			session.flush();
 			
 		} catch (ConstraintViolationException e) {
 		
@@ -593,6 +598,7 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 
 			qtdLines = query.executeUpdate();
 			
+			session.flush();
 
 		} catch (ConstraintViolationException e) {
 			session.getTransaction().rollback();
@@ -628,6 +634,7 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 
 			qtdLines = query.executeUpdate();
 			
+			session.flush();
 
 		} catch (ConstraintViolationException e) {
 			session.getTransaction().rollback();
@@ -661,7 +668,9 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 
 			qtdLines = query.executeUpdate();
 			
-
+			session.flush();
+			
+			
 		} catch (ConstraintViolationException e) {
 			session.getTransaction().rollback();
 
@@ -694,8 +703,9 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 			}
 
 			qtdLines = query.executeUpdate();
-	
-
+			
+			session.flush();
+				
 		} catch (ConstraintViolationException e) {
 		
 			session.getTransaction().rollback();
