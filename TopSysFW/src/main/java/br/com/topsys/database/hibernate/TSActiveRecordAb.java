@@ -120,7 +120,7 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 		
 	}
 	
-	public T get(String... fieldsOrderBy) {
+	public T getByModel(String... fieldsOrderBy) {
 		
 		this.openTransaction();
 		
@@ -156,7 +156,7 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 	
 	}
 	
-	public T get(String[] excludeProperty,String... fieldsOrderBy ) {
+	public T getByModel(String[] excludeProperty,String... fieldsOrderBy ) {
 		
 		this.openTransaction();
 		
@@ -188,7 +188,7 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 		return (T) crit.uniqueResult();
 	}
 
-	public List<T> find(String... fieldsOrderBy) {
+	public List<T> findByModel(String... fieldsOrderBy) {
 		
 		this.openTransaction();
 		
@@ -228,7 +228,7 @@ public abstract class TSActiveRecordAb<T> implements Serializable {
 	
 
 
-	public List<T> find(String[] excludeProperty,String... fieldsOrderBy ) {
+	public List<T> findByModel(String[] excludeProperty,String... fieldsOrderBy ) {
 		
 		this.openTransaction();
 		
