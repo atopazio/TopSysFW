@@ -8,7 +8,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
-
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
@@ -25,7 +24,7 @@ import br.com.topsys.util.TSHibernateUtil;
 
 
 
-public abstract class TSActiveRecordAb<T> implements Serializable {
+public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serializable {
 
 	protected Class<T> persistentClass;
 	
