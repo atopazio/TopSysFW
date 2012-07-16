@@ -8,7 +8,10 @@ import br.com.topsys.exception.TSApplicationException;
 
 public interface TSActiveRecordIf<T> {
 	
-	public T getById(Long id);
+	
+	public Long getId();
+	
+	public T getById();
 
 	public List<T> findAll(String... fieldsOrderBy);
 	

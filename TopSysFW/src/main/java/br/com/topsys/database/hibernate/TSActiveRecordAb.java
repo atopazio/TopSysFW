@@ -45,12 +45,14 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 	
 		return this.persistentClass;
 	}
+	
+	
 
 	
 
 
 	@SuppressWarnings("unchecked")
-	public T getById(Long id) {
+	public T getById() {
 		
 		this.openTransaction();
 		
@@ -61,7 +63,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 			session = getSession();
 
 
-		objeto = (T) session.get(this.getPersistentClass(), id);
+		objeto = (T) session.get(this.getPersistentClass(), getId());
 
 
 		} catch (Exception e) {
