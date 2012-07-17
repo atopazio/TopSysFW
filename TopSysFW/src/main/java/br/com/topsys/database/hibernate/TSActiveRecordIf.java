@@ -10,6 +10,7 @@ public interface TSActiveRecordIf<T> {
 	
 	
 	public Long getId();
+	public void setId(Long id);
 	
 	public T getById();
 

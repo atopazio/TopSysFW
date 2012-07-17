@@ -295,7 +295,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 			
 			
 		} catch (ConstraintViolationException e) {
-		
+			this.setId(null);
 			session.getTransaction().rollback();
 
 			throw new TSApplicationException(TSConstant.MENSAGEM_UNIQUE,e);
