@@ -21,9 +21,6 @@ import br.com.topsys.exception.TSSystemException;
 import br.com.topsys.util.TSHibernateUtil;
 
 
-
-
-
 public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serializable {
 
 	protected Class<T> persistentClass;
@@ -61,9 +58,9 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		Session session = null;
 		try {
 			session = getSession();
+			session.setFlushMode(FlushMode.NEVER);
 
-
-		objeto = (T) session.get(this.getPersistentClass(), getId());
+			objeto = (T) session.get(this.getPersistentClass(), getId());
 
 
 		} catch (Exception e) {
@@ -107,6 +104,8 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 			
 			String sqlFinal=sql.substring(0, sql.length()-1);
 			
+			session.setFlushMode(FlushMode.NEVER);
+			
 			queryObject = session.createQuery(sqlFinal);
 			
 			coll = queryObject.list();
@@ -132,7 +131,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 
 		try {
 			session = getSession();
-
+			session.setFlushMode(FlushMode.NEVER);
 			
 			crit = session.createCriteria(getPersistentClass());
 			
@@ -163,6 +162,8 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		Criteria crit = null;
 		Session session = getSession();
 		try {
+				
+			session.setFlushMode(FlushMode.NEVER);
 			crit = session.createCriteria(getPersistentClass());
 		
 			Example example = Example.create(this);
@@ -200,7 +201,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 
 		try {
 			session = getSession();
-
+			session.setFlushMode(FlushMode.NEVER);
 			
 
 			crit = session.createCriteria(getPersistentClass());
@@ -235,6 +236,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		Criteria crit = null;
 		Session session = getSession();
 		try {
+			session.setFlushMode(FlushMode.NEVER);
 			crit = session.createCriteria(getPersistentClass());
 		
 			Example example = Example.create(this);
@@ -347,7 +349,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 
 		try {
 			session = getSession();
-
+			session.setFlushMode(FlushMode.NEVER);
 			crit = session.createCriteria(getPersistentClass());
 
 			for (Criterion c : criterion) {
@@ -375,7 +377,8 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 
 		try {
 			session = getSession();
-
+			session.setFlushMode(FlushMode.NEVER);
+			
 			queryObject = session.createSQLQuery(sql).addEntity(this.getPersistentClass());
 
 			 if (param != null) {
@@ -409,7 +412,8 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		Session session = getSession();
 		Query queryObject = null;
 		try {
-
+			
+			session.setFlushMode(FlushMode.NEVER);
 			queryObject = session.createQuery(query);
 
 			if (objects != null) {
@@ -444,7 +448,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		T object = null;
 		Session session = getSession();
 		try {
-
+			session.setFlushMode(FlushMode.NEVER);
 			query = session.createQuery(hql);
 			if (objects != null) {
 				int i = 0;
@@ -472,6 +476,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		T object = null;
 		Session session = getSession();
 		try {
+			session.setFlushMode(FlushMode.NEVER);
 			query = session.getNamedQuery(hql);
 			if (objects != null) {
 				int i = 0;
@@ -498,7 +503,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		Object objeto = null;
 		Session session = getSession();
 		try {
-			
+			session.setFlushMode(FlushMode.NEVER);
 			query = session.createQuery(ejbql);
 
 			if (objects != null) {
@@ -557,7 +562,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		Session session = getSession();
 		try {
 
-
+			session.setFlushMode(FlushMode.NEVER);
 			queryObject = session.getNamedQuery(query);
 
 			if (objects != null) {

@@ -18,6 +18,7 @@ import br.com.topsys.exception.TSApplicationException;
 import br.com.topsys.exception.TSSystemException;
 import br.com.topsys.util.TSHibernateUtil;
 
+@Deprecated
 public abstract class TSHibernateAb<T extends Serializable> {
 
 	protected Class<T> persistentClass;
