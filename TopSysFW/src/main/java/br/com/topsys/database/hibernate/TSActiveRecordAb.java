@@ -3,7 +3,11 @@ package br.com.topsys.database.hibernate;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
@@ -19,6 +23,7 @@ import br.com.topsys.constant.TSConstant;
 import br.com.topsys.exception.TSApplicationException;
 import br.com.topsys.exception.TSSystemException;
 import br.com.topsys.util.TSHibernateUtil;
+import br.com.topsys.util.TSUtil;
 
 
 public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serializable {
@@ -189,7 +194,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		return (T) crit.uniqueResult();
 	}
 
-	public List<T> findByModel(String... fieldsOrderBy) {
+	public List<T> findByModel(Map<String, Object> map,String... fieldsOrderBy) {
 		
 		this.openTransaction();
 		
@@ -198,6 +203,8 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		
 		Criterion criterion=Example.create(this).enableLike(
 				MatchMode.ANYWHERE).ignoreCase().excludeZeroes();
+		
+		
 
 		try {
 			session = getSession();
@@ -214,7 +221,14 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 			
 			crit.add(criterion);
 			
-		
+			if (map != null){
+				for (Iterator<Entry<String, Object>> iter =map.entrySet().iterator();iter.hasNext();){
+					Entry<String,Object> entry = iter.next();
+					crit.createCriteria(entry.getKey()).add(Example.create(entry.getValue()));
+					
+				}
+			}	
+			
 
 		} catch (Exception e) {
 
@@ -229,7 +243,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 	
 
 
-	public List<T> findByModel(String[] excludeProperty,String... fieldsOrderBy ) {
+	public List<T> findByModel(Map<String, Object> map, String[] excludeProperty,String... fieldsOrderBy ) {
 		
 		this.openTransaction();
 		
@@ -252,6 +266,14 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 			for(String propertyName : fieldsOrderBy){
 				crit.addOrder(Order.asc(propertyName));
 			}
+			
+			if (map != null){
+				for (Iterator<Entry<String, Object>> iter =map.entrySet().iterator();iter.hasNext();){
+					Entry<String,Object> entry = iter.next();
+					crit.createCriteria(entry.getKey()).add(Example.create(entry.getValue()));
+					
+				}
+			}	
 			
 			crit.add(example);
 
@@ -316,8 +338,8 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		Session session = getSession();
 
 		try {
-
-			session.delete(this);
+			 
+			session.delete(getById());
 			
 			session.flush();
 			
@@ -398,13 +420,79 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 
 		return coll;
 	}
+	
+	protected List findBySQL(Class classe, String sql, Object... param) {
+		
+		this.openTransaction();
+		
+		Query queryObject=null;
+		Session session = null;
+		
+		List coll=null;
 
-	protected List<T> find(String query) {
-		return find(query, null);
+		try {
+			session = getSession();
+			session.setFlushMode(FlushMode.NEVER);
+			
+			queryObject = session.createSQLQuery(sql).addEntity(classe);
+
+			 if (param != null) {
+					int i = 0;
+					for (Object o : param) {
+						queryObject.setParameter(i, o);
+						i++;
+					}
+				}
+
+				coll = queryObject.list();
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+
+		return coll;
+	}
+	
+	protected Object getBySQL(Class classe, String sql, Object... param) {
+		
+		this.openTransaction();
+		
+		Query queryObject=null;
+		Session session = null;
+		
+		Object object=null;
+
+		try {
+			session = getSession();
+			session.setFlushMode(FlushMode.NEVER);
+			
+			queryObject = session.createSQLQuery(sql).addEntity(classe);
+
+			 if (param != null) {
+					int i = 0;
+					for (Object o : param) {
+						queryObject.setParameter(i, o);
+						i++;
+					}
+				}
+
+			 object = queryObject.uniqueResult();
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+
+		return object;
+	}
+
+	protected List<T> find(String query, String order) {
+		return find(query, order,null);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected List<T> find(String query, Object... objects) {
+	protected List<T> find(String query,String order, Object... objects) {
 		
 		this.openTransaction();
 		
@@ -412,6 +500,10 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		Session session = getSession();
 		Query queryObject = null;
 		try {
+			
+			if (TSUtil.isNotEmpty(order)){
+				query += " order by "+order;
+			}	
 			
 			session.setFlushMode(FlushMode.NEVER);
 			queryObject = session.createQuery(query);
@@ -423,6 +515,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 					i++;
 				}
 			}
+			
 
 			coll = queryObject.list();
 
