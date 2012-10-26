@@ -21,6 +21,8 @@ public interface TSActiveRecordIf<T> {
 	
 	public T getByModel(String[] excludeProperty,String... fieldsOrderBy );
 	
+	public List<T> findByModel(String... fieldsOrderBy);
+	
 	public List<T> findByModel(Map<String, Object> map,String... fieldsOrderBy);
 
 	public List<T> findByModel(Map<String, Object> map,String[] excludeProperty,String... fieldsOrderBy );

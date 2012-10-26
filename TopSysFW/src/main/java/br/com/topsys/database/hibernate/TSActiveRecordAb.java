@@ -12,12 +12,14 @@ import java.util.Map.Entry;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.transform.Transformers;
 
 import br.com.topsys.constant.TSConstant;
 import br.com.topsys.exception.TSApplicationException;
@@ -240,6 +242,43 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 	
 	}
 	
+	public List<T> findByModel(String... fieldsOrderBy) {
+		
+		this.openTransaction();
+		
+		Criteria crit = null;
+		Session session = null;
+		
+		Criterion criterion=Example.create(this).enableLike(
+				MatchMode.ANYWHERE).ignoreCase().excludeZeroes();
+		
+		try {
+			session = getSession();
+			session.setFlushMode(FlushMode.NEVER);
+			
+
+			crit = session.createCriteria(getPersistentClass());
+			
+			for(String propertyName : fieldsOrderBy){
+				
+				crit.addOrder(Order.asc(propertyName));
+				
+			}
+			
+			crit.add(criterion);
+			
+			
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+
+		return crit.list();
+		
+	
+	}
+	
 	
 
 
@@ -421,7 +460,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		return coll;
 	}
 	
-	protected List findBySQL(Class classe, String sql, Object... param) {
+	protected List findBySQL(Class classe, String[] atributos, String sql, Object... param) {
 		
 		this.openTransaction();
 		
@@ -433,9 +472,18 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		try {
 			session = getSession();
 			session.setFlushMode(FlushMode.NEVER);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			
-			queryObject = session.createSQLQuery(sql).addEntity(classe);
-
+			if (atributos != null){
+				for (String attr : atributos){
+					sqlQuery = sqlQuery.addScalar(attr);
+				}
+			}
+			
+			
+			queryObject = sqlQuery.setResultTransformer(Transformers.aliasToBean(classe));
+			
+			
 			 if (param != null) {
 					int i = 0;
 					for (Object o : param) {
@@ -454,7 +502,7 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		return coll;
 	}
 	
-	protected Object getBySQL(Class classe, String sql, Object... param) {
+	protected Object getBySQL(Class classe,String[] atributos, String sql, Object... param) {
 		
 		this.openTransaction();
 		
@@ -466,9 +514,15 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		try {
 			session = getSession();
 			session.setFlushMode(FlushMode.NEVER);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			
-			queryObject = session.createSQLQuery(sql).addEntity(classe);
-
+			if (atributos != null){
+				for (String attr : atributos){
+					sqlQuery = sqlQuery.addScalar(attr);
+				}
+			}	
+			queryObject = sqlQuery.setResultTransformer(Transformers.aliasToBean(classe));
+			
 			 if (param != null) {
 					int i = 0;
 					for (Object o : param) {

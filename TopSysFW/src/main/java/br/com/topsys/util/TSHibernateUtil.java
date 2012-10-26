@@ -34,5 +34,10 @@ public final class TSHibernateUtil {
 	public static Session getSession() {
 		return getSessionFactory().getCurrentSession();
 	}
+	
+	public static Session getSession(String configuracao){
+		SessionFactory factory = new Configuration().configure(configuracao).buildSessionFactory();
+		return factory.openSession();
+	}
 
 }
