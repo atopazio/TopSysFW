@@ -8,7 +8,11 @@ import org.hibernate.cfg.Configuration;
 
 public final class TSHibernateUtil {
 
-	private static final SessionFactory sessionFactory = buildSessionFactory();
+	private static SessionFactory sessionFactory;
+	
+	static{
+		sessionFactory = buildSessionFactory();
+	}
 
 	private static SessionFactory buildSessionFactory() {
 		try {
