@@ -3,6 +3,7 @@ package br.com.topsys.database.hibernate;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.transform.Transformers;
 
+
+
 import br.com.topsys.constant.TSConstant;
 import br.com.topsys.exception.TSApplicationException;
 import br.com.topsys.exception.TSSystemException;
@@ -32,12 +35,36 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 
 	protected Class<T> persistentClass;
 	
-	@SuppressWarnings("unchecked")
 	public TSActiveRecordAb() {
-		this.persistentClass = (Class<T>) ((ParameterizedType) getClass()
-				.getGenericSuperclass()).getActualTypeArguments()[0];
+		//this.persistentClass = (Class<T>) ((ParameterizedType) getClass()
+		//		.getGenericSuperclass()).getActualTypeArguments()[0];
 		
+		this.init();
+	
 	}
+	
+	private void init(){
+		Type type = getClass().getGenericSuperclass();  
+        Type arg;  
+        
+        if(type instanceof  ParameterizedType){  
+                arg = ((ParameterizedType)type).getActualTypeArguments()[0];  
+        }else if(type instanceof Class){  
+                arg = ((ParameterizedType)((Class)type).getGenericSuperclass()).getActualTypeArguments()[0];  
+                  
+        }else{  
+                throw new RuntimeException("Type no construtor invalido '"+getClass()+"'!");  
+        }  
+
+        if(arg instanceof Class){  
+                this.persistentClass = (Class<T>)arg;  
+        }else if(arg instanceof ParameterizedType){  
+                this.persistentClass = (Class<T>)((ParameterizedType)arg).getRawType();  
+        }else{  
+                throw new RuntimeException("Problema para saber a classe generica '"+getClass()+"'! ");  
+        }
+	}
+	
 	
 	protected Session getSession() {
 
@@ -123,6 +150,40 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		}
 
 		return coll;
+
+		
+	}
+	
+	public T getReference() {
+		this.openTransaction();
+		
+		
+		Session session = getSession();
+		Query queryObject = null;
+		
+		T objeto = null;
+		try {
+
+			StringBuilder sql=new StringBuilder("select new ");
+			sql.append(this.getPersistentClass().getName());
+			sql.append("(o.id) from "); 
+			sql.append(this.getPersistentClass().getName());
+			sql.append(" o where o.id = :id");
+		
+			session.setFlushMode(FlushMode.NEVER);
+			
+			queryObject = session.createQuery(sql.toString());
+			
+			queryObject.setLong("id", getId());
+			
+			objeto = (T)queryObject.uniqueResult();
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+
+		return objeto;
 
 		
 	}
@@ -776,6 +837,40 @@ public abstract class TSActiveRecordAb<T> implements TSActiveRecordIf<T>, Serial
 		try {
 
 			query = session.createQuery(hql);
+
+			if (objects != null) {
+				int i = 0;
+				for (Object o : objects) {
+					query.setParameter(i, o);
+					i++;
+				}
+			}
+
+			qtdLines = query.executeUpdate();
+			
+			session.flush();
+
+		} catch (ConstraintViolationException e) {
+			session.getTransaction().rollback();
+
+			throw new TSApplicationException(TSConstant.MENSAGEM_UNIQUE);
+
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+
+			throw new TSSystemException(e);
+		}
+		return qtdLines;
+	}
+	
+	protected int executeSQL(String sql, Object... objects)
+			throws TSApplicationException {
+		Query query = null;
+		Session session = getSession();
+		int qtdLines = 0;
+		try {
+
+			query = session.createSQLQuery(sql);
 
 			if (objects != null) {
 				int i = 0;

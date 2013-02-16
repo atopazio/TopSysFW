@@ -33,6 +33,8 @@ public interface TSActiveRecordIf<T> {
 		
 	public void delete() throws TSApplicationException;
 	
+	public T getReference();
+	
 	
 		
 
