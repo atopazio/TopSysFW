@@ -258,6 +258,27 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 
 		return objeto;
 	}
+	
+	
+	public Object getObject() {
+		Object objeto = null;
+		try {
+
+			this.resultSet = this.statement.executeQuery();
+
+			if (this.resultSet.next()) {
+				objeto = this.resultSet.getObject(1);
+			}
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		} finally {
+			this.close();
+		}
+
+		return objeto;
+	}
 
 	private Object getObjectPopulate(Class beanClass, String property[]) {
 

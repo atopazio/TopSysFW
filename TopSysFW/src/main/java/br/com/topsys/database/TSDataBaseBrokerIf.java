@@ -87,6 +87,8 @@ public interface TSDataBaseBrokerIf {
 
 	public Object getObjectBean(Class bean,String... values);
 	
+	public Object getObject();
+	
 	public List getCollectionBean(Class bean,String... values);
 	
 	public void addBatch() throws TSApplicationException;

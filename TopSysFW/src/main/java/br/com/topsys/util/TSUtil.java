@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1542,6 +1543,28 @@ public final class TSUtil {
 		}
 
 		return valor;
+
+	}
+	
+	public static String gerarSenha(int tamanho) {
+
+        final char[] ALL_CHARS = new char[62];
+
+        final Random RANDOM = new Random();
+
+        for (int i = 48, j = 0; i < 123; i++) {
+                if (Character.isLetterOrDigit(i)) {
+                        ALL_CHARS[j] = (char) i;
+                        j++;
+                }
+        }
+
+        final char[] result = new char[tamanho];
+        for (int i = 0; i < tamanho; i++) {
+                result[i] = ALL_CHARS[RANDOM.nextInt(ALL_CHARS.length)];
+        }
+
+        return new String(result);
 
 	}
 
