@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 
@@ -20,7 +21,7 @@ public abstract class TSEjb3BrokerAb<T> {
 
 	private Class<T> persistentClass;
 
-	@PersistenceContext
+	@PersistenceContext(unitName="default")
 	protected EntityManager em;
 
 	public TSEjb3BrokerAb() {
@@ -113,7 +114,9 @@ public abstract class TSEjb3BrokerAb<T> {
 				}
 			}
 			object = (T) query.getSingleResult();
-
+		}catch (NoResultException e) {
+			// retorna objeto null.
+			
 		} catch (Exception e) {
 
 			throw new TSSystemException(e);
@@ -137,7 +140,9 @@ public abstract class TSEjb3BrokerAb<T> {
 				}
 			}
 			object = (T) query.getSingleResult();
-
+		}catch (NoResultException e) {
+			// retorna objeto null.
+			
 		} catch (Exception e) {
 
 			throw new TSSystemException(e);
@@ -162,7 +167,9 @@ public abstract class TSEjb3BrokerAb<T> {
 				}
 			}
 			objeto = query.getSingleResult();
-
+		}catch (NoResultException e) {
+			// retorna objeto null.
+			
 		} catch (Exception e) {
 
 			throw new TSSystemException(e);
@@ -187,7 +194,9 @@ public abstract class TSEjb3BrokerAb<T> {
 				}
 			}
 			objeto = query.getSingleResult();
-
+		}catch (NoResultException e) {
+			// retorna objeto null.
+			
 		} catch (Exception e) {
 
 			throw new TSSystemException(e);
@@ -369,11 +378,13 @@ public abstract class TSEjb3BrokerAb<T> {
 	}
 
 	public T findById(Long id) {
-		T entity;
+		T entity = null;
 		try {
 
 			entity = (T) em.find(getPersistentClass(), id);
-
+		}catch (NoResultException e) {
+			// retorna objeto null.
+			
 		} catch (Exception e) {
 
 			throw new TSSystemException(e);
