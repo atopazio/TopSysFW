@@ -514,7 +514,7 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 
 			throw new TSBusinessException(TSConstant.MENSAGEM_FOREIGNKEY);
 		
-		}else if (String.valueOf(TSConstraint.getRaiseException()).equals(e.getSQLState()) || e.getErrorCode() == Integer.parseInt(TSConstraint.getRaiseException())) {
+		}else if (String.valueOf(TSConstraint.getRaiseException()).contains(e.getSQLState()) || String.valueOf(e.getErrorCode()).equals(TSConstraint.getRaiseException())) {
 
 				throw new TSDataBaseException(e.getMessage());
 			
