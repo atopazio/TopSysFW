@@ -94,6 +94,35 @@ public abstract class TSEjb3BrokerAb<T> {
 
 		return coll;
 	}
+	
+	
+	public List<T> find(int maxResult,String query,Object... objects) {
+		List<T> coll = null;
+
+		javax.persistence.Query queryObject = null;
+		try {
+
+			queryObject = em.createQuery(query);
+			
+			queryObject.setMaxResults(maxResult);
+
+			if (objects != null) {
+				int i = 1;
+				for (Object o : objects) {
+					queryObject.setParameter(i, o);
+					i++;
+				}
+			}
+
+			coll = queryObject.getResultList();
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		}
+
+		return coll;
+	}
 
 	public T get(String hql) {
 		return get(hql, null);
@@ -394,7 +423,7 @@ public abstract class TSEjb3BrokerAb<T> {
 
 	public List<T> findAll() {
 		return em.createQuery(
-				"select obj from " + getPersistentClass().getName() + " obj")
+				"select obj from " + getPersistentClass().getSimpleName() + " obj")
 				.getResultList();
 	}
 
@@ -444,7 +473,7 @@ public abstract class TSEjb3BrokerAb<T> {
 	public void remove(T entity) throws TSApplicationException {
 		try {
 
-			em.remove(entity);
+			em.remove(em.merge(entity));
 			em.flush();
 
 		} catch (EntityExistsException he) {
