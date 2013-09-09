@@ -421,9 +421,25 @@ public abstract class TSEjb3BrokerAb<T> {
 		return entity;
 	}
 
-	public List<T> findAll() {
-		return em.createQuery(
-				"select obj from " + getPersistentClass().getSimpleName() + " obj")
+	public List<T> findAll(String... order) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select obj from ");
+		sql.append(getPersistentClass().getSimpleName());
+		sql.append(" obj");
+		
+		if(order!=null && order.length > 0){
+			sql.append(" order by ");
+		}
+		for(String propertyName : order){
+			sql.append("o.");
+			sql.append(propertyName);
+			sql.append(",");
+		}
+		
+		String sqlFinal=sql.substring(0, sql.length()-1);
+		
+		return em.createQuery(sqlFinal
+				)
 				.getResultList();
 	}
 
