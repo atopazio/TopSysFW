@@ -1,6 +1,5 @@
 package br.com.topsys.database.ejb3;
 
-import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -321,10 +320,6 @@ public abstract class TSEjb3BrokerAb<T> {
 
 			throw new TSBusinessException(TSConstant.MENSAGEM_UNIQUE);
 
-		} catch (PersistenceException e) {
-
-			throw new TSBusinessException(TSConstant.MENSAGEM_UNIQUE);
-
 		} catch (Exception e) {
 
 			throw new TSSystemException(e);
@@ -454,12 +449,7 @@ public abstract class TSEjb3BrokerAb<T> {
 
 			throw new TSBusinessException(TSConstant.MENSAGEM_UNIQUE);
 
-		} catch (PersistenceException e) {
-
-			throw new TSBusinessException(TSConstant.MENSAGEM_UNIQUE);
-
 		} catch (Exception e) {
-
 			throw new TSSystemException(e);
 		}
 		return ent;
@@ -472,10 +462,6 @@ public abstract class TSEjb3BrokerAb<T> {
 			em.flush();
 
 		} catch (EntityExistsException he) {
-
-			throw new TSBusinessException(TSConstant.MENSAGEM_UNIQUE);
-
-		} catch (PersistenceException e) {
 
 			throw new TSBusinessException(TSConstant.MENSAGEM_UNIQUE);
 
