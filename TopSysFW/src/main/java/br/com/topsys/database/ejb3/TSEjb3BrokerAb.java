@@ -426,7 +426,7 @@ public abstract class TSEjb3BrokerAb<T> {
 			sql.append(" order by ");
 		}
 		for(String propertyName : order){
-			sql.append("o.");
+			sql.append("obj.");
 			sql.append(propertyName);
 			sql.append(",");
 		}
