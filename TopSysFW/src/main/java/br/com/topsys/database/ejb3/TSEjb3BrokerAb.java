@@ -420,16 +420,18 @@ public abstract class TSEjb3BrokerAb<T> {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select obj from ");
 		sql.append(getPersistentClass().getSimpleName());
-		sql.append(" obj");
+		sql.append(" obj ");
 		
 		if(order!=null && order.length > 0){
 			sql.append(" order by ");
+			
+			for(String propertyName : order){
+				sql.append("obj.");
+				sql.append(propertyName);
+				sql.append(",");
+			}
 		}
-		for(String propertyName : order){
-			sql.append("obj.");
-			sql.append(propertyName);
-			sql.append(",");
-		}
+		
 		
 		String sqlFinal=sql.substring(0, sql.length()-1);
 		
