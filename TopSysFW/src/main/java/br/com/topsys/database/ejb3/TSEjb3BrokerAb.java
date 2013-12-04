@@ -6,9 +6,12 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+
+import org.hibernate.FlushMode;
 
 import br.com.topsys.constant.TSConstant;
 import br.com.topsys.exception.TSApplicationException;
@@ -134,6 +137,8 @@ public abstract class TSEjb3BrokerAb<T> {
 		try {
 
 			query = em.createQuery(hql);
+			
+			
 			if (objects != null) {
 				int i = 1;
 				for (Object o : objects) {
@@ -479,6 +484,7 @@ public abstract class TSEjb3BrokerAb<T> {
 
 			em.remove(em.merge(entity));
 			em.flush();
+			
 
 		} catch (EntityExistsException he) {
 
@@ -490,5 +496,7 @@ public abstract class TSEjb3BrokerAb<T> {
 		}
 
 	}
+	
+
 
 }
