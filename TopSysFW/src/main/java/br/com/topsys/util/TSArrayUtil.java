@@ -53,6 +53,7 @@
  */
 package br.com.topsys.util;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -3091,5 +3092,7 @@ public class TSArrayUtil {
 		}
 		return result;
 	}
+	
+
 
 }
