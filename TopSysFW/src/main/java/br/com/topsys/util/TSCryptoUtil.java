@@ -57,22 +57,28 @@ public final class TSCryptoUtil {
 	 * @exception NoSuchAlgorithmException
 	 * @exception IllegalBlockSizeException
 	 */
-	public static String criptografar(String texto) {
-
+	public static String criptografar(Object texto) {
+		
 		return String.valueOf(hexDump(criptografarByte(texto)));
 
 	}
+
 	
-	public static byte[] criptografarByte(String texto) {
+	public static byte[] criptografarByte(Object texto) {
 		
 		byte[] cipherText = null;
+		byte[] plainText = null;
+		
 		try{
 			if (texto == null) {
 				return null;
 			}
-	
-			byte[] plainText = texto.getBytes("UTF8");
-	
+			if (texto instanceof String || texto instanceof Long){
+				plainText = (texto.toString()).getBytes("UTF8");
+			}else{
+				return null;
+			}
+			
 			Key key = new SecretKeySpec(CHAVE, "AES");
 	
 			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
