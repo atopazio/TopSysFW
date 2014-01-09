@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -17,6 +19,9 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+
+import com.sun.xml.messaging.saaj.util.Base64;
 
 import sun.misc.BASE64Decoder;
 import br.com.topsys.exception.TSSystemException;
@@ -30,13 +35,15 @@ import br.com.topsys.exception.TSSystemException;
  */
 public final class TSCryptoUtil {
 
-	private static final byte[] CHAVE = { -110, 74, -3, 122, 56, -48, -60, -22 };
+	private static final byte[] CHAVE = "top10sysSistemas".getBytes();
 
 	/**
 	 *  
 	 */
 	private TSCryptoUtil() {
 	}
+	
+	
 
 	/**
 	 * Funçao recebe uma String e devolve a mesma cifrada em formato hexadecimal
@@ -50,29 +57,37 @@ public final class TSCryptoUtil {
 	 * @exception NoSuchAlgorithmException
 	 * @exception IllegalBlockSizeException
 	 */
-	public static String criptografar(String texto)
-			throws UnsupportedEncodingException, NoSuchPaddingException,
-			InvalidKeyException, BadPaddingException, NoSuchAlgorithmException,
-			IllegalBlockSizeException {
+	public static String criptografar(String texto) {
 
-		if (texto == null) {
-			return null;
-		}
+		return String.valueOf(hexDump(criptografarByte(texto)));
 
-		byte[] plainText = texto.getBytes("UTF8");
-
-		Key key = new SecretKeySpec(CHAVE, "DES");
-
-		Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
-
-		cipher.init(Cipher.ENCRYPT_MODE, key);
-
-		byte[] cipherText = cipher.doFinal(plainText);
-
-		String hexValues = String.valueOf(hexDump(cipherText));
-
-		return hexValues;
 	}
+	
+	public static byte[] criptografarByte(String texto) {
+		
+		byte[] cipherText = null;
+		try{
+			if (texto == null) {
+				return null;
+			}
+	
+			byte[] plainText = texto.getBytes("UTF8");
+	
+			Key key = new SecretKeySpec(CHAVE, "AES");
+	
+			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+	
+			cipher.init(Cipher.ENCRYPT_MODE, key);
+	
+			cipherText = cipher.doFinal(plainText);
+	
+			
+		}catch (Exception e) {
+			throw new TSSystemException(e);
+		}	
+		return cipherText;
+	}
+
 
 	/**
 	 * Funçao recebe uma String e devolve a mesma decifrada.
@@ -86,24 +101,32 @@ public final class TSCryptoUtil {
 	 * @exception NoSuchAlgorithmException
 	 * @exception IllegalBlockSizeException
 	 */
-	public static String desCriptografar(String texto)
-			throws UnsupportedEncodingException, NoSuchPaddingException,
-			InvalidKeyException, BadPaddingException, NoSuchAlgorithmException,
-			IllegalBlockSizeException {
-		byte[] cipherText = byteDump(texto);
+	public static String desCriptografar(String texto) {
+		
+		String retorno = null;
+		
+		try{
+			byte[] newPlainText = null;
 
-		if (texto == null) {
-			return null;
+			if (texto == null) {
+				return null;
+			}
+			Key chave = new SecretKeySpec(CHAVE, "AES");
+
+			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+
+			cipher.init(Cipher.DECRYPT_MODE, chave);
+
+			newPlainText = cipher.doFinal(DatatypeConverter.parseHexBinary(texto.replace("\\x", "")));
+			
+			
+			retorno = new String(newPlainText, "UTF8");
+			
+		}catch (Exception e) {
+			throw new TSSystemException(e);
 		}
-		Key chave = new SecretKeySpec(CHAVE, "DES");
-
-		Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
-
-		cipher.init(Cipher.DECRYPT_MODE, chave);
-
-		byte[] newPlainText = cipher.doFinal(cipherText);
-
-		return (new String(newPlainText, "UTF8"));
+		
+		return retorno;
 	}
 
 	/**

@@ -1513,9 +1513,9 @@ public final class TSUtil {
 	public static String tratarString(String valor) {
 
 		if (!TSUtil.isEmpty(valor)) {
-
 			valor = valor.trim().replaceAll("  ", " ");
-
+		}else{
+			valor = null;
 		}
 
 		return valor;
@@ -1545,6 +1545,9 @@ public final class TSUtil {
 		return valor;
 
 	}
+	
+	
+	
 	
 	public static String gerarSenha(int tamanho) {
 

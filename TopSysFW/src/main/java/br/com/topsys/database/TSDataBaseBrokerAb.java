@@ -23,6 +23,7 @@ import br.com.topsys.exception.TSApplicationException;
 import br.com.topsys.exception.TSBusinessException;
 import br.com.topsys.exception.TSDataBaseException;
 import br.com.topsys.exception.TSSystemException;
+import br.com.topsys.util.TSCryptoUtil;
 import br.com.topsys.util.TSLogUtil;
 import br.com.topsys.util.TSPropertiesUtil;
 import br.com.topsys.util.TSServiceLocatorUtil;
@@ -238,6 +239,8 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 
 		return array;
 	}
+	
+
 
 	public Object getObjectBean(Class bean, String... values) {
 		Object objeto = null;
@@ -289,6 +292,8 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
         StringBuffer methodName = new StringBuffer();
         Object objBean = null;
         TSDBList list = null;
+        
+        boolean flagDecrypt = false;
 
         try {
 
@@ -310,6 +315,11 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 
                     methodName.append("get");
 
+                    if(y == 0 && elementProperty[0].startsWith("decrypt")){
+                    	flagDecrypt = true;
+                    	y = y+1;
+                    }
+                    
                     methodName.append(elementProperty[y].substring(0, 1)
                             .toUpperCase());
 
@@ -328,9 +338,15 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
                             .getReturnType() });
 
                     if (returnClassName.equals("java.lang.String")) {
-                        methodSet.invoke(beanTmp, new Object[] { list
-                                .getString(i + 1) });
-
+                        if(flagDecrypt){
+                        	methodSet.invoke(beanTmp, new Object[] { TSCryptoUtil.desCriptografar(list
+                                    .getString(i + 1)) });
+                        	flagDecrypt= false;
+                        }else{
+                        	methodSet.invoke(beanTmp, new Object[] { list
+                                    .getString(i + 1) });
+                        }
+                    	
                     } else if (returnClassName.equals("java.lang.Byte")) {
                         methodSet.invoke(beanTmp, new Object[] { list
                                 .getByte(i + 1) });
@@ -344,8 +360,15 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
                                 .getInteger(i + 1) });
 
                     } else if (returnClassName.equals("java.lang.Long")) {
-                        methodSet.invoke(beanTmp, new Object[] { list
+                    	if(flagDecrypt){
+                        	methodSet.invoke(beanTmp, new Object[] { Long.valueOf(TSCryptoUtil.desCriptografar(list
+                                    .getString(i + 1))) });
+                        	flagDecrypt= false;
+                        }else{
+                    	
+                        	methodSet.invoke(beanTmp, new Object[] { list
                                 .getLong(i + 1) });
+                        }
 
                     } else if (returnClassName.equals("java.lang.Float")) {
                         methodSet.invoke(beanTmp, new Object[] { list
