@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -456,6 +457,38 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 
 					statement.setDate(this.incremento++, new java.sql.Date(
 							((Date) value).getTime()));
+
+				} else {
+
+					statement.setObject(this.incremento++, value);
+
+				}
+
+			}
+		} catch (SQLException e) {
+			this.close();
+
+			throw new TSSystemException(e);
+		}
+	}
+	
+	public void set(Object value, Calendar GMT) {
+		try {
+
+			if (value == null) {
+
+				statement.setNull(this.incremento++, Types.NULL);
+
+			} else {
+
+				if (value instanceof Timestamp) {
+
+					statement.setTimestamp(this.incremento++, (Timestamp)value, GMT);
+
+				} else if (value instanceof Date) {
+
+					statement.setDate(this.incremento++, new java.sql.Date(
+							((Date) value).getTime()),GMT);
 
 				} else {
 

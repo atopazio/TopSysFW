@@ -2,6 +2,7 @@ package br.com.topsys.database;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +55,8 @@ public interface TSDataBaseBrokerIf {
 	public void set(Object... values);
 	
 	public void set(Object object);
+	
+	public void set(Object value, Calendar GMT);
 	
 	public void setProcedureOrFunctionNull();
 
