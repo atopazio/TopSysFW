@@ -9,10 +9,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.sql.DataSource;
 
@@ -48,7 +51,7 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 	private final static String MENSAGEM_METODO_INVALIDO = "Esse metódo não pode ser executado quando utilizado a classe TSDataBaseBroker, ou seja quando o projeto utiliza EJB!";
 
 	public TSDataBaseBrokerAb() {
-		
+			
 		this.jndi = this
 		.getProperty(TSConstant.JNDI_CONNECTION);
 		
