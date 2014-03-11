@@ -47,6 +47,8 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 	protected String jndi;
 
 	private StringBuilder sql = new StringBuilder();
+	
+	protected Calendar GMT;
 
 	private final static String MENSAGEM_METODO_INVALIDO = "Esse metódo não pode ser executado quando utilizado a classe TSDataBaseBroker, ou seja quando o projeto utiliza EJB!";
 
@@ -453,8 +455,12 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 			} else {
 
 				if (value instanceof Timestamp) {
-
-					statement.setTimestamp(this.incremento++, (Timestamp)value);
+					if (this.GMT != null){
+						this.GMT.setTimeInMillis((((Timestamp)value).getTime()));
+						statement.setTimestamp(this.incremento++,new Timestamp(this.GMT.getTimeInMillis()));
+					}else{
+						statement.setTimestamp(this.incremento++, (Timestamp)value);
+					}
 
 				} else if (value instanceof Date) {
 
@@ -506,6 +512,12 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 			throw new TSSystemException(e);
 		}
 	}
+	
+	public void setGMT(String GMT) {
+		this.GMT = Calendar.getInstance(TimeZone.getTimeZone(GMT));
+	}
+	
+	
 
 	public void setPropertySQL(String query, Object... objects) {
 		try {

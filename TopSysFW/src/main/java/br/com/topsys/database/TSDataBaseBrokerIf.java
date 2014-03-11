@@ -58,6 +58,8 @@ public interface TSDataBaseBrokerIf {
 	
 	public void set(Object value, Calendar GMT);
 	
+	public void setGMT(String GMT);
+	
 	public void setProcedureOrFunctionNull();
 
 	public void setProcedureOrFunctionParameter(Object value);
