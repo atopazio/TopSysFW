@@ -2,7 +2,6 @@ package br.com.topsys.database.jdbc.sequence;
 
 import br.com.topsys.database.jdbc.TSDBList;
 import br.com.topsys.database.jdbc.TSDataBaseBrokerImpl;
-import br.com.topsys.database.jdbc.sequence.TSSequenceIf;
 
 public final class TSSequencePostgresImpl extends TSDataBaseBrokerImpl implements TSSequenceIf {
 

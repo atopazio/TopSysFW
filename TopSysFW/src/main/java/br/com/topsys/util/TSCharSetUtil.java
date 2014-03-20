@@ -53,6 +53,8 @@
  */
 package br.com.topsys.util;
 
+import org.apache.commons.lang.CharSet;
+
 /**
  * <p>
  * Operations on <code>CharSet</code>s.

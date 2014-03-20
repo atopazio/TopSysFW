@@ -6,7 +6,6 @@
  */
 package br.com.topsys.util;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
