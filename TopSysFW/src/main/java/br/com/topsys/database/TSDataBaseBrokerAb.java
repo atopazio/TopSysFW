@@ -365,8 +365,7 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 
                     } else if (returnClassName.equals("java.lang.Long")) {
                     	if(flagDecrypt){
-                        	methodSet.invoke(beanTmp, new Object[] { Long.valueOf(TSCryptoUtil.desCriptografar(list
-                                    .getString(i + 1))) });
+                        	methodSet.invoke(beanTmp, new Object[] { TSCryptoUtil.desCriptografar(list.getString(i + 1)) != null ? Long.valueOf(TSCryptoUtil.desCriptografar(list.getString(i + 1))) : null });
                         	flagDecrypt= false;
                         }else{
                     	

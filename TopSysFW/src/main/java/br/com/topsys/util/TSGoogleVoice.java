@@ -37,11 +37,14 @@ public final class TSGoogleVoice {
         try {
             microfone.close();
             
-            recognizer = new Recognizer(Recognizer.Languages.PORTUGUESE_BRASIL);
+            Runtime.getRuntime().exec("curl -X POST --data-binary @'hosflow.wav' --header 'Content-Type: audio/l16; rate=16000;' 'https://www.google.com/speech-api/v2/recognize?output=json&lang=pt-BR&key=AIzaSyCONXcEXBH8GdOkt5lxH96EBjMikR8vrsk' >> teste.txt");            
+           // recognizer = new Recognizer(Recognizer.Languages.PORTUGUESE_BRASIL);
 
-            response = recognizer.getRecognizedDataForFlac(file, 1);
+            //response = recognizer.getRecognizedDataForFlac(file, 1);
 
-            retorno = response.getResponse();
+            
+            
+            //retorno = response.getResponse();
 
         } catch (Exception ex) {
             throw new TSSystemException(ex);
