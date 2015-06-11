@@ -29,6 +29,7 @@ import br.com.topsys.util.TSCryptoUtil;
 import br.com.topsys.util.TSLogUtil;
 import br.com.topsys.util.TSPropertiesUtil;
 import br.com.topsys.util.TSServiceLocatorUtil;
+import br.com.topsys.util.TSUtil;
 
 public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 
@@ -365,7 +366,7 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 
                     } else if (returnClassName.equals("java.lang.Long")) {
                     	if(flagDecrypt){
-                        	methodSet.invoke(beanTmp, new Object[] { TSCryptoUtil.desCriptografar(list.getString(i + 1)) != null ? Long.valueOf(TSCryptoUtil.desCriptografar(list.getString(i + 1))) : null });
+                        	methodSet.invoke(beanTmp, new Object[] { !TSUtil.isEmpty(TSCryptoUtil.desCriptografar(list.getString(i + 1))) ? Long.valueOf(TSCryptoUtil.desCriptografar(list.getString(i + 1))) : null });
                         	flagDecrypt= false;
                         }else{
                     	

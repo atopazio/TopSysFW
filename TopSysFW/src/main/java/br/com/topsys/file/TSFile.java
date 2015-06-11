@@ -85,10 +85,15 @@ public final class TSFile {
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(arquivo)));
 			out.println(string.toString());
-			out.close();
+
 		} catch (IOException e) {
 			TSLogUtil.getInstance().severe(e.getMessage());
 			throw new TSSystemException(e);
+		} finally {
+			try {
+				out.close();
+			} catch (Exception e) {
+			}
 		}
 
 	}
@@ -105,10 +110,15 @@ public final class TSFile {
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(arquivo)));
 			out.println(texto);
-			out.close();
+
 		} catch (IOException e) {
 			TSLogUtil.getInstance().severe(e.getMessage());
 			throw new TSSystemException(e);
+		} finally {
+			try {
+				out.close();
+			} catch (Exception e) {
+			}
 		}
 	}
 
@@ -122,10 +132,15 @@ public final class TSFile {
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(arquivo)));
 			out.println(string.toString());
-			out.close();
+
 		} catch (IOException e) {
 			TSLogUtil.getInstance().severe(e.getMessage());
 			throw new TSSystemException(e);
+		} finally {
+			try {
+				out.close();
+			} catch (Exception e) {
+			}
 		}
 
 	}
@@ -162,6 +177,11 @@ public final class TSFile {
 		} catch (IOException e) {
 			TSLogUtil.getInstance().severe(e.getMessage());
 			throw new TSSystemException(e);
+		} finally {
+			try {
+				reader.close();
+			} catch (Exception e) {
+			}
 		}
 		return string.toString();
 
@@ -404,22 +424,19 @@ public final class TSFile {
 	public static final boolean criarArquivo(String arquivo, String conteudo, String charset) {
 
 		boolean criado = true;
+		FileOutputStream fos = null;
+		OutputStreamWriter osw = null;
+		BufferedWriter bw = null;
 
 		try {
 
-			FileOutputStream fos = new FileOutputStream(arquivo);
+			fos = new FileOutputStream(arquivo);
 
-			OutputStreamWriter osw = new OutputStreamWriter(fos, charset);
+			osw = new OutputStreamWriter(fos, charset);
 
-			BufferedWriter bw = new BufferedWriter(osw);
+			bw = new BufferedWriter(osw);
 
 			bw.write(conteudo);
-
-			bw.close();
-
-			osw.close();
-
-			fos.close();
 
 		} catch (Exception e) {
 
@@ -427,6 +444,19 @@ public final class TSFile {
 
 			e.printStackTrace();
 
+		} finally {
+			try {
+				bw.close();
+			} catch (Exception e) {
+			}
+			try {
+				osw.close();
+			} catch (Exception e) {
+			}
+			try {
+				fos.close();
+			} catch (Exception e) {
+			}
 		}
 
 		return criado;
@@ -458,12 +488,16 @@ public final class TSFile {
 	public static final boolean descompactar(String arquivo, String pasta) {
 
 		final int BUFFER = 2048;
+		FileOutputStream fos = null;
+		BufferedOutputStream dest = null;
+		FileInputStream fis = null;
+		ZipInputStream zis = null;
 
 		try {
 
-			FileInputStream fis = new FileInputStream(arquivo);
+			fis = new FileInputStream(arquivo);
 
-			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+			zis = new ZipInputStream(new BufferedInputStream(fis));
 
 			ZipEntry entry;
 
@@ -473,9 +507,9 @@ public final class TSFile {
 
 				byte data[] = new byte[BUFFER];
 
-				FileOutputStream fos = new FileOutputStream(pasta + entry.getName());
+				fos = new FileOutputStream(pasta + entry.getName());
 
-				BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
+				dest = new BufferedOutputStream(fos, BUFFER);
 
 				while ((count = zis.read(data, 0, BUFFER)) != -1) {
 
@@ -497,6 +531,23 @@ public final class TSFile {
 
 			return false;
 
+		} finally {
+			try {
+				dest.flush();
+			} catch (Exception e) {
+			}
+			try {
+				dest.close();
+			} catch (Exception e) {
+			}
+			try {
+				zis.close();
+			} catch (Exception e) {
+			}
+			try {
+				fos.close();
+			} catch (Exception e) {
+			}
 		}
 
 	}
