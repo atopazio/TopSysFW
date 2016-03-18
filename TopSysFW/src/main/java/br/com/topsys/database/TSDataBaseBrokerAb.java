@@ -274,7 +274,7 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 
 			this.resultSet = this.statement.executeQuery();
 
-			if (this.resultSet.next()) {
+			while (this.resultSet.next()) {
 				objeto.add(this.resultSet.getObject(1));
 			}
 
