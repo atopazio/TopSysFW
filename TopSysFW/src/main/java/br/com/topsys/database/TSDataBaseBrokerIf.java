@@ -94,6 +94,8 @@ public interface TSDataBaseBrokerIf {
 	
 	public Object getObject();
 	
+	public List getList();
+	
 	public List getCollectionBean(Class bean,String... values);
 	
 	public void addBatch() throws TSApplicationException;

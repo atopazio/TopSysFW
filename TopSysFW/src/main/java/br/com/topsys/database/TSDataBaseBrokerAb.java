@@ -267,6 +267,26 @@ public abstract class TSDataBaseBrokerAb implements TSDataBaseBrokerIf {
 		return objeto;
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List getList() {
+		List objeto = new ArrayList();
+		try {
+
+			this.resultSet = this.statement.executeQuery();
+
+			if (this.resultSet.next()) {
+				objeto.add(this.resultSet.getObject(1));
+			}
+
+		} catch (Exception e) {
+
+			throw new TSSystemException(e);
+		} finally {
+			this.close();
+		}
+
+		return objeto;
+	}
 	
 	public Object getObject() {
 		Object objeto = null;
