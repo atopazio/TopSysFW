@@ -38,6 +38,7 @@ public class TSApplicationException extends Exception {
 		super(chave);
 	}
 	
+	
 	public TSApplicationException(String chave,Exception e) {
 		super(chave,e);
 	}

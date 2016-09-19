@@ -12,7 +12,6 @@ import javax.ejb.ApplicationException;
 @ApplicationException(rollback=true)
 public class TSBusinessException extends TSApplicationException {
 
-	private String mensageDataBase;
 	
 	public TSBusinessException(Exception e) {
 		super(e);
@@ -20,7 +19,6 @@ public class TSBusinessException extends TSApplicationException {
 
 	public TSBusinessException(String chave) {
 		super(chave);
-		this.mensageDataBase=chave;
 		
 	}
 	
